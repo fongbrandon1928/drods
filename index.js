@@ -3,6 +3,7 @@ dotenv.config()
 
 import { Client, Intents } from 'discord.js';
 import https from 'node:https';
+import http from 'node:http';
 import { createCanvas, loadImage } from 'canvas';
 
 const fetchText = (url) =>
@@ -195,6 +196,21 @@ client.on('messageCreate', async (message) => {
             message.reply(`Maple API request failed: ${errorMessage}`);
         }
     }
+});
+
+const port = Number(process.env.PORT) || 10000;
+const server = http.createServer((req, res) => {
+    if (req.url === '/health') {
+        res.writeHead(200, { 'Content-Type': 'text/plain' });
+        res.end('ok');
+        return;
+    }
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('bot running');
+});
+
+server.listen(port, '0.0.0.0', () => {
+    console.log(`Web server listening on ${port}`);
 });
 
 client.login(process.env.DISCORD_TOKEN);
