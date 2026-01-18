@@ -1,0 +1,12 @@
+services:
+  - type: background
+    name: bran-drods-bot
+    env: node
+    region: oregon
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DISCORD_TOKEN
+        sync: false
