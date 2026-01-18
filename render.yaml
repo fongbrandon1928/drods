@@ -3,7 +3,7 @@ services:
     name: bran-drods-bot
     env: node
     region: oregon
-    buildCommand: npm install
+    buildCommand: npm ci
     startCommand: npm start
     envVars:
       - key: NODE_ENV
