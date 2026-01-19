@@ -4,6 +4,7 @@ dotenv.config();
 import { Client, Intents } from 'discord.js';
 import { handleHelpCommand } from './commands/help.js';
 import { handleMapleCommand } from './commands/maple.js';
+import { handleBloodwashCommand } from './commands/bloodwash.js';
 
 const client = new Client({
     intents: [
@@ -25,6 +26,9 @@ client.on('messageCreate', async (message) => {
 
     const handledMaple = await handleMapleCommand(message);
     if (handledMaple) return;
+
+    const handledBloodwash = await handleBloodwashCommand(message);
+    if (handledBloodwash) return;
 
     const rawContent = message.content?.trim() || '';
     if (rawContent.startsWith('-')) {

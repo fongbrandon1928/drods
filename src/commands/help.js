@@ -1,7 +1,8 @@
 const HELP_MESSAGE = [
     'Available commands:',
     '-help',
-    '-maple <player>'
+    '-maple <player>',
+    '-bloodwash <level> <str> <dex> <int> <luk>'
 ].join('\n');
 
 export const handleHelpCommand = async (message) => {
