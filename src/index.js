@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { Client, Intents } from 'discord.js';
+import { handleHelpCommand } from './commands/help.js';
 import { handleMapleCommand } from './commands/maple.js';
 
 const client = new Client({
@@ -19,7 +20,16 @@ client.on('messageCreate', async (message) => {
         message.reply('Test received!');
     }
 
-    await handleMapleCommand(message);
+    const handledHelp = await handleHelpCommand(message);
+    if (handledHelp) return;
+
+    const handledMaple = await handleMapleCommand(message);
+    if (handledMaple) return;
+
+    const rawContent = message.content?.trim() || '';
+    if (rawContent.startsWith('-')) {
+        message.reply('Invalid command: You can enter "-help" to display all valid commands.');
+    }
 });
 
 client.login(process.env.DISCORD_TOKEN);
