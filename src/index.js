@@ -15,12 +15,29 @@ const client = new Client({
     ]
 });
 
+client.once('ready', () => {
+    if (client.user) {
+        client.user.setActivity('-help');
+    }
+});
+
 client.on('messageCreate', async (message) => {
     if (message.author?.bot) return;
     if (message.content?.trim() === '-test') {
         message.reply('Test received!');
     }
 
+    // Ilia is happy
+    const contentLower = message.content?.toLowerCase() || '';
+    if (contentLower.includes('ilia')) {
+        message.reply('gay');
+        return;
+    }
+    if (contentLower.includes('valtarius')) {
+        message.reply('double gay');
+        return;
+    }
+    
     const handledHelp = await handleHelpCommand(message);
     if (handledHelp) return;
 

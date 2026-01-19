@@ -43,6 +43,6 @@ export const handleBloodwashCommand = async (message) => {
 
     const assigned = str + dex + intStat + luk;
     const remaining = totalPoints - assigned;
-    message.reply(`Nonassigned AP: ${remaining}`);
+    message.reply(`Unused/Bloodwashed AP: ${remaining}`);
     return true;
 };
