@@ -4,11 +4,6 @@ const CLASS_RULES = {
         avgHp: 10,
         minMp: (level) => 10 * level - 5
     },
-    warrior: {
-        divisor: 4,
-        avgHp: 52,
-        minMp: (level) => 4 * level + 56
-    },
     spearman: {
         divisor: 4,
         avgHp: 52,
@@ -60,7 +55,9 @@ export const handleWashesCommand = async (message) => {
 
     const parts = unquotedContent.split(/\s+/);
     if (parts.length < 4) {
-        message.reply('Usage: -washes <class> <level> <base mp>');
+        message.reply(
+            'Usage: -washes <class> <level> <base mp>\nValid classes: beginner, spearman, fighter, page, thief, bowman, magician, gunslinger, brawler.'
+        );
         return true;
     }
 
@@ -71,7 +68,7 @@ export const handleWashesCommand = async (message) => {
 
     if (!rule) {
         message.reply(
-            'Invalid class. Use: beginner, warrior, spearman, fighter, page, thief, bowman, magician, gunslinger, brawler.'
+            'Invalid class. Use: beginner, spearman, fighter, page, thief, bowman, magician, gunslinger, brawler.'
         );
         return true;
     }
