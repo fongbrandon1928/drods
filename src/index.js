@@ -6,6 +6,7 @@ import { handleHelpCommand } from './commands/help.js';
 import { handleMapleCommand } from './commands/maple.js';
 import { handleBloodwashCommand } from './commands/bloodwash.js';
 import { handlePartyrollCommand } from './commands/partyroll.js';
+import { handleWashesCommand } from './commands/washes.js';
 
 const client = new Client({
     intents: [
@@ -50,6 +51,9 @@ client.on('messageCreate', async (message) => {
 
     const handledPartyroll = await handlePartyrollCommand(message);
     if (handledPartyroll) return;
+
+    const handledWashes = await handleWashesCommand(message);
+    if (handledWashes) return;
 
     const rawContent = message.content?.trim() || '';
     if (rawContent.startsWith('-')) {
