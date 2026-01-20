@@ -5,6 +5,7 @@ import { Client, Intents } from 'discord.js';
 import { handleHelpCommand } from './commands/help.js';
 import { handleMapleCommand } from './commands/maple.js';
 import { handleBloodwashCommand } from './commands/bloodwash.js';
+import { handlePartyrollCommand } from './commands/partyroll.js';
 
 const client = new Client({
     intents: [
@@ -46,6 +47,9 @@ client.on('messageCreate', async (message) => {
 
     const handledBloodwash = await handleBloodwashCommand(message);
     if (handledBloodwash) return;
+
+    const handledPartyroll = await handlePartyrollCommand(message);
+    if (handledPartyroll) return;
 
     const rawContent = message.content?.trim() || '';
     if (rawContent.startsWith('-')) {
