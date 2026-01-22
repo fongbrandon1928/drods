@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+import path from 'node:path';
 import { Client, Intents } from 'discord.js';
 import { handleHelpCommand } from './commands/help.js';
 import { handleMapleCommand } from './commands/maple.js';
@@ -14,7 +15,11 @@ const client = new Client({
         Intents.FLAGS.DIRECT_MESSAGES,
         Intents.FLAGS.MESSAGE_CONTENT,
         Intents.FLAGS.GUILD_VOICE_STATES
-    ]
+    ],
+    allowedMentions: {
+        parse: [],
+        repliedUser: false
+    }
 });
 
 client.once('ready', () => {
@@ -36,7 +41,9 @@ client.on('messageCreate', async (message) => {
         return;
     }
     if (contentLower.includes('valtarius')) {
-        message.reply('double gay');
+        message.reply({
+            files: [path.join('src', 'images', 'valtarius.png')]
+        });
         return;
     }
     if (contentLower.includes('dahs')) {

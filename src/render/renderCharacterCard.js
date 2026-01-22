@@ -29,7 +29,7 @@ export const renderCharacterCard = async (name, avatarUrl, stats) => {
 
     // Background
     try {
-        const bg = await loadImage('bg.png');
+        const bg = await loadImage('src/images/bg.png');
         ctx.drawImage(bg, 0, 0, width, height);
     } catch {
         ctx.fillStyle = '#1f1f1f';
