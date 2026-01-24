@@ -53,7 +53,9 @@ client.on('messageCreate', async (message) => {
     // Ilia is happy
     const contentLower = message.content?.toLowerCase() || '';
     if (contentLower.includes('ilia')) {
-        message.reply('gay');
+        message.reply({
+            files: [path.join('src', 'images', 'ilia.png')]
+        });
         return;
     }
     if (contentLower.includes('valtarius')) {
