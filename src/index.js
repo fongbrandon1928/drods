@@ -6,6 +6,7 @@ import { handleHelpCommand } from './commands/help.js';
 import { handleMapleCommand } from './commands/maple.js';
 import { handleBloodwashCommand } from './commands/bloodwash.js';
 import { handlePartyrollCommand } from './commands/partyroll.js';
+import { handleCWKPQCommand } from './commands/cwkpq.js';
 import path from 'node:path';
 
 const client = new Client({
@@ -44,6 +45,9 @@ client.on('messageCreate', async (message) => {
 
     const handledPartyroll = await handlePartyrollCommand(message);
     if (handledPartyroll) return;
+
+    const handledCWKPQ = await handleCWKPQCommand(message);
+    if (handledCWKPQ) return;
 
     const rawContent = message.content?.trim() || '';
     if (rawContent.startsWith('-')) {
