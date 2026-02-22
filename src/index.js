@@ -7,6 +7,7 @@ import { handleMapleCommand } from './commands/maple.js';
 import { handleBloodwashCommand } from './commands/bloodwash.js';
 import { handlePartyrollCommand } from './commands/partyroll.js';
 import { handleCWKPQCommand } from './commands/cwkpq.js';
+import { handleFirechickenCommand } from './commands/firechicken.js';
 import path from 'node:path';
 
 const client = new Client({
@@ -14,7 +15,8 @@ const client = new Client({
         Intents.FLAGS.GUILDS,
         Intents.FLAGS.GUILD_MESSAGES,
         Intents.FLAGS.DIRECT_MESSAGES,
-        Intents.FLAGS.MESSAGE_CONTENT
+        Intents.FLAGS.MESSAGE_CONTENT,
+        Intents.FLAGS.GUILD_VOICE_STATES
     ],
     allowedMentions: {
         parse: [],
@@ -48,6 +50,9 @@ client.on('messageCreate', async (message) => {
 
     const handledCWKPQ = await handleCWKPQCommand(message);
     if (handledCWKPQ) return;
+
+    const handledFirechicken = await handleFirechickenCommand(message);
+    if (handledFirechicken) return;
 
     const rawContent = message.content?.trim() || '';
     if (rawContent.startsWith('-')) {

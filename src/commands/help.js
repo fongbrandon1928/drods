@@ -3,7 +3,9 @@ const HELP_MESSAGE = [
     '-help',
     '-maple <player>',
     '-bloodwash <level> <str> <dex> <int> <luk>',
-    '-partyroll <name> <name> ...'
+    '-partyroll <name> <name> ...',
+    '-washes <class> <level> <base mp> (beginner, spearman, fighter, page, thief, bowman, magician, gunslinger, brawler)',
+    '-firechicken'
 ].join('\n');
 
 export const handleHelpCommand = async (message) => {
