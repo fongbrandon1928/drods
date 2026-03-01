@@ -7,7 +7,11 @@ import { handleMapleCommand } from './commands/maple.js';
 import { handleBloodwashCommand } from './commands/bloodwash.js';
 import { handlePartyrollCommand } from './commands/partyroll.js';
 import { handleCWKPQCommand } from './commands/cwkpq.js';
-import { handleFirechickenCommand } from './commands/firechicken.js';
+import {
+    handleSoundboardButton,
+    handleSoundboardCommand,
+    handleSoundboardPanelCommand
+} from './commands/soundboard.js';
 import path from 'node:path';
 
 const client = new Client({
@@ -51,8 +55,11 @@ client.on('messageCreate', async (message) => {
     const handledCWKPQ = await handleCWKPQCommand(message);
     if (handledCWKPQ) return;
 
-    const handledFirechicken = await handleFirechickenCommand(message);
-    if (handledFirechicken) return;
+    const handledSoundboardPanel = await handleSoundboardPanelCommand(message);
+    if (handledSoundboardPanel) return;
+
+    const handledSoundboard = await handleSoundboardCommand(message);
+    if (handledSoundboard) return;
 
     const rawContent = message.content?.trim() || '';
     if (rawContent.startsWith('-')) {
@@ -77,6 +84,11 @@ client.on('messageCreate', async (message) => {
         message.reply('not david');
         return;
     }
+});
+
+client.on('interactionCreate', async (interaction) => {
+    const handled = await handleSoundboardButton(interaction);
+    if (handled) return;
 });
 
 client.login(process.env.DISCORD_TOKEN);

@@ -5,7 +5,8 @@ const HELP_MESSAGE = [
     '-bloodwash <level> <str> <dex> <int> <luk>',
     '-partyroll <name> <name> ...',
     '-washes <class> <level> <base mp> (beginner, spearman, fighter, page, thief, bowman, magician, gunslinger, brawler)',
-    '-firechicken'
+    '-sb <soundname>',
+    '-sbpanel'
 ].join('\n');
 
 export const handleHelpCommand = async (message) => {
