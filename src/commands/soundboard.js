@@ -18,7 +18,32 @@ const SOUND_EXTENSIONS = ['.ogg', '.mp3'];
 const BUTTON_PREFIX = 'sb:';
 const LEAVE_BUTTON_ID = 'sb:leave';
 const MAX_BUTTONS = 25;
+const INACTIVITY_TIMEOUT_MS = 5 * 60 * 1000;
 const playersByGuild = new Map();
+const inactivityTimeoutsByGuild = new Map();
+
+const clearInactivityDisconnect = (guildId) => {
+    const timeout = inactivityTimeoutsByGuild.get(guildId);
+    if (timeout) {
+        clearTimeout(timeout);
+        inactivityTimeoutsByGuild.delete(guildId);
+    }
+};
+
+const scheduleInactivityDisconnect = (guildId) => {
+    clearInactivityDisconnect(guildId);
+    const timeout = setTimeout(() => {
+        const connection = getVoiceConnection(guildId);
+        if (connection) {
+            connection.destroy();
+        }
+        const player = playersByGuild.get(guildId);
+        player?.stop(true);
+        playersByGuild.delete(guildId);
+        inactivityTimeoutsByGuild.delete(guildId);
+    }, INACTIVITY_TIMEOUT_MS);
+    inactivityTimeoutsByGuild.set(guildId, timeout);
+};
 
 const getSoundNames = () => {
     if (!fs.existsSync(SOUND_DIR)) return [];
@@ -79,8 +104,16 @@ const getOrCreatePlayer = (guildId) => {
     if (existing) return existing;
     const player = createAudioPlayer();
     player.setMaxListeners(25);
+    player.on(AudioPlayerStatus.Playing, () => {
+        clearInactivityDisconnect(guildId);
+    });
+    player.on(AudioPlayerStatus.Idle, () => {
+        scheduleInactivityDisconnect(guildId);
+    });
     player.on('error', (error) => {
         console.error('Audio player error:', error);
+        clearInactivityDisconnect(guildId);
+        playersByGuild.delete(guildId);
         const activeConnection = getVoiceConnection(guildId);
         activeConnection?.destroy();
     });
@@ -144,12 +177,9 @@ const playSoundForMember = async (member, reply, soundName) => {
         inputType
     });
 
+    clearInactivityDisconnect(guildId);
     connection.subscribe(player);
     player.play(resource);
-
-    player.on(AudioPlayerStatus.Idle, () => {
-        // Stay connected for additional sounds.
-    });
 
     return true;
 };
@@ -202,6 +232,10 @@ export const handleSoundboardButton = async (interaction) => {
         }
         const botMember = voiceChannel.guild?.members?.cache?.get(interaction.client.user?.id);
         if (botMember?.voice?.channelId === voiceChannel.id) {
+            const guildId = voiceChannel.guild.id;
+            clearInactivityDisconnect(guildId);
+            playersByGuild.get(guildId)?.stop(true);
+            playersByGuild.delete(guildId);
             botMember.voice.disconnect();
             await interaction.followUp({ content: 'Disconnected.', ephemeral: true });
             return true;
