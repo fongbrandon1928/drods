@@ -7,6 +7,7 @@ import { handleMapleCommand } from './commands/maple.js';
 import { handleBloodwashCommand } from './commands/bloodwash.js';
 import { handlePartyrollCommand } from './commands/partyroll.js';
 import { handleCWKPQCommand } from './commands/cwkpq.js';
+import { handleYoutubeCommand } from './commands/youtube.js';
 import {
     handleSoundboardButton,
     handleSoundboardCommand,
@@ -60,6 +61,9 @@ client.on('messageCreate', async (message) => {
 
     const handledSoundboard = await handleSoundboardCommand(message);
     if (handledSoundboard) return;
+
+    const handledYoutube = await handleYoutubeCommand(message);
+    if (handledYoutube) return;
 
     const rawContent = message.content?.trim() || '';
     if (rawContent.startsWith('-')) {
