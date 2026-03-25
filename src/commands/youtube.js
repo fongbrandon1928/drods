@@ -355,12 +355,13 @@ export const handleYoutubeCommand = async (message) => {
     const rawContent = message.content?.trim() || '';
     const unquotedContent = rawContent.replace(/^["']|["']$/g, '');
     const lowerContent = unquotedContent.toLowerCase();
+    const firstToken = lowerContent.split(/\s+/)[0] || '';
 
     const isPlayCommand = lowerContent === '-yt' || lowerContent.startsWith('-yt ');
-    const isStopCommand = lowerContent === '-ytstop';
-    const isSkipCommand = lowerContent === '-ytskip';
-    const isQueueCommand = lowerContent === '-ytq';
-    const isNowPlayingCommand = lowerContent === '-ytnp';
+    const isStopCommand = firstToken === '-ytstop' || firstToken === '-stop';
+    const isSkipCommand = firstToken === '-ytskip' || firstToken === '-skip';
+    const isQueueCommand = firstToken === '-ytq' || firstToken === '-queue';
+    const isNowPlayingCommand = firstToken === '-ytnp' || firstToken === '-np';
     if (!isPlayCommand && !isStopCommand && !isSkipCommand && !isQueueCommand && !isNowPlayingCommand) {
         return false;
     }

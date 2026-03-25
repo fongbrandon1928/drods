@@ -8,10 +8,10 @@ const HELP_MESSAGE = [
     '-sb <soundname>',
     '-sbpanel',
     '-yt <youtube_url>',
-    '-ytq',
-    '-ytnp',
-    '-ytskip',
-    '-ytstop'
+    '-ytq / -queue',
+    '-ytnp / -np',
+    '-ytskip / -skip',
+    '-ytstop / -stop'
 ].join('\n');
 
 export const handleHelpCommand = async (message) => {
