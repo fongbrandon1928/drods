@@ -19,8 +19,42 @@ const BUTTON_PREFIX = 'sb:';
 const LEAVE_BUTTON_ID = 'sb:leave';
 const MAX_BUTTONS = 25;
 const INACTIVITY_TIMEOUT_MS = 5 * 60 * 1000;
+const PANEL_DELETE_DELAY_MS = 5 * 60 * 1000;
 const playersByGuild = new Map();
 const inactivityTimeoutsByGuild = new Map();
+
+const isUnknownInteractionError = (error) =>
+    error?.code === 10062 || (typeof error?.message === 'string' && error.message.includes('Unknown interaction'));
+
+const sendEphemeralInteractionMessage = async (interaction, content) => {
+    try {
+        if (interaction.deferred || interaction.replied) {
+            await interaction.followUp({ content, ephemeral: true });
+            return;
+        }
+        await interaction.reply({ content, ephemeral: true });
+    } catch (error) {
+        if (isUnknownInteractionError(error)) {
+            return;
+        }
+        throw error;
+    }
+};
+
+const deleteSoundboardPanelMessage = async (interaction) => {
+    try {
+        const panelMessage = interaction.message;
+        if (panelMessage?.deletable) {
+            await panelMessage.delete();
+        }
+    } catch (error) {
+        const errorCode = error?.code;
+        // Ignore expected failures (already deleted or missing permissions).
+        if (errorCode !== 10008 && errorCode !== 50013) {
+            console.error('Failed to delete soundboard panel message:', error);
+        }
+    }
+};
 
 const clearInactivityDisconnect = (guildId) => {
     const timeout = inactivityTimeoutsByGuild.get(guildId);
@@ -215,7 +249,21 @@ export const handleSoundboardPanelCommand = async (message) => {
     }
 
     const rows = buildSoundboardRows(soundNames);
-    await message.reply({ content: 'Soundboard:', components: rows });
+    const panelMessage = await message.reply({ content: 'Soundboard:', components: rows });
+    const timeout = setTimeout(async () => {
+        try {
+            if (panelMessage.deletable) {
+                await panelMessage.delete();
+            }
+        } catch (error) {
+            const errorCode = error?.code;
+            // Ignore expected failures (already deleted or missing permissions).
+            if (errorCode !== 10008 && errorCode !== 50013) {
+                console.error('Failed to auto-delete soundboard panel:', error);
+            }
+        }
+    }, PANEL_DELETE_DELAY_MS);
+    timeout.unref?.();
     return true;
 };
 
@@ -223,11 +271,21 @@ export const handleSoundboardButton = async (interaction) => {
     if (!interaction.isButton()) return false;
     if (!interaction.customId.startsWith(BUTTON_PREFIX)) return false;
 
-    await interaction.deferUpdate();
+    try {
+        await interaction.deferUpdate();
+    } catch (error) {
+        if (isUnknownInteractionError(error)) {
+            return true;
+        }
+        console.error('Failed to acknowledge soundboard interaction:', error);
+        return true;
+    }
+
     if (interaction.customId === LEAVE_BUTTON_ID) {
         const voiceChannel = interaction.member?.voice?.channel;
         if (!voiceChannel) {
-            await interaction.followUp({ content: 'Join a voice channel first.', ephemeral: true });
+            await sendEphemeralInteractionMessage(interaction, 'Join a voice channel first.');
+            await deleteSoundboardPanelMessage(interaction);
             return true;
         }
         const botMember = voiceChannel.guild?.members?.cache?.get(interaction.client.user?.id);
@@ -237,10 +295,12 @@ export const handleSoundboardButton = async (interaction) => {
             playersByGuild.get(guildId)?.stop(true);
             playersByGuild.delete(guildId);
             botMember.voice.disconnect();
-            await interaction.followUp({ content: 'Disconnected.', ephemeral: true });
+            await sendEphemeralInteractionMessage(interaction, 'Disconnected.');
+            await deleteSoundboardPanelMessage(interaction);
             return true;
         }
-        await interaction.followUp({ content: 'I am not in your voice channel.', ephemeral: true });
+        await sendEphemeralInteractionMessage(interaction, 'I am not in your voice channel.');
+        await deleteSoundboardPanelMessage(interaction);
         return true;
     }
 
@@ -248,7 +308,7 @@ export const handleSoundboardButton = async (interaction) => {
     await playSoundForMember(
         interaction.member,
         async (content) => {
-            await interaction.followUp({ content, ephemeral: true });
+            await sendEphemeralInteractionMessage(interaction, content);
         },
         soundName
     );

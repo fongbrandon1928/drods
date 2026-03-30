@@ -6,12 +6,7 @@ const HELP_MESSAGE = [
     '-partyroll <name> <name> ...',
     '-washes <class> <level> <base mp> (beginner, spearman, fighter, page, thief, bowman, magician, gunslinger, brawler)',
     '-sb <soundname>',
-    '-sbpanel',
-    '-yt <youtube_url>',
-    '-ytq / -queue',
-    '-ytnp / -np',
-    '-ytskip / -skip',
-    '-ytstop / -stop'
+    '-sbpanel'
 ].join('\n');
 
 export const handleHelpCommand = async (message) => {
