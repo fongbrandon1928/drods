@@ -4,6 +4,7 @@ const HELP_MESSAGE = [
     '-maple <player>',
     '-bloodwash <level> <str> <dex> <int> <luk>',
     '-partyroll <name> <name> ...',
+    '-roll <number>',
     '-washes <class> <level> <base mp> (beginner, spearman, fighter, page, thief, bowman, magician, gunslinger, brawler)',
     '-sb <soundname>',
     '-sbpanel'

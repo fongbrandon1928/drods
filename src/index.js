@@ -6,6 +6,7 @@ import { handleHelpCommand } from './commands/help.js';
 import { handleMapleCommand } from './commands/maple.js';
 import { handleBloodwashCommand } from './commands/bloodwash.js';
 import { handlePartyrollCommand } from './commands/partyroll.js';
+import { handleRollCommand } from './commands/roll.js';
 import { handleCWKPQCommand } from './commands/cwkpq.js';
 import {
     handleSoundboardButton,
@@ -51,6 +52,9 @@ client.on('messageCreate', async (message) => {
 
     const handledPartyroll = await handlePartyrollCommand(message);
     if (handledPartyroll) return;
+
+    const handledRoll = await handleRollCommand(message);
+    if (handledRoll) return;
 
     const handledCWKPQ = await handleCWKPQCommand(message);
     if (handledCWKPQ) return;
