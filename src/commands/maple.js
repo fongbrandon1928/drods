@@ -15,8 +15,8 @@ export const handleMapleCommand = async (message) => {
         return true;
     }
 
-    const jsonUrl = `https://maplelegends.com/api/character?name=${encodeURIComponent(name)}`;
-    const avatarUrl = `https://maplelegends.com/api/getavatar?name=${encodeURIComponent(name)}&t=${Date.now()}`;
+    const jsonUrl = `https://legends.ml/api/character?name=${encodeURIComponent(name)}`;
+    const avatarUrl = `https://legends.ml/api/getavatar?name=${encodeURIComponent(name)}&t=${Date.now()}`;
     try {
         const jsonData = await fetchText(jsonUrl);
         let parsed = null;
